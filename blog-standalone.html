@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Mini';
+            src: url('Fonts/mini.otf') format('opentype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ========== Blog Styles ========== */
+        .blog-content {
+            background: #F3DEE8;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .blog-container {
+            padding: 20px 30px;
+            min-height: 100%;
+        }
+
+        .blog-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .blog-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .blog-filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #3F3F4F;
+            border-radius: 25px;
+            background: #fff;
+            font-family: 'Mini', sans-serif;
+            font-size: 12px;
+            color: #3F3F4F;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .blog-filter-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .blog-filter-btn.active {
+            background: #3F3F4F;
+            color: #fff;
+        }
+
+        .blog-title {
+            text-align: center;
+            font-family: 'Mini', sans-serif;
+            font-size: 28px;
+            color: #682428;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+        }
+
+        .blog-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .blog-post {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px 25px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .blog-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .blog-post-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: visible;
+        }
+
+        .blog-post-avatar {
+            width: 50px !important;
+            height: auto !important;
+            max-width: 50px !important;
+            min-width: 50px !important;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .blog-post-username {
+            font-family: 'Mini', sans-serif;
+            font-size: 18px;
+            color: #3F3F4F;
+        }
+
+        .blog-post-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Mini', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .blog-post-tag.portfolio {
+            background: #FFE4EC;
+            color: #8B4B6B;
+        }
+
+        .blog-post-tag.life {
+            background: #E4F0FF;
+            color: #4B6B8B;
+        }
+
+        .blog-post-text {
+            font-family: 'Mini', sans-serif;
+            font-size: 15px;
+            color: #3F3F4F;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .blog-post-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .blog-post-images.double {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 12px;
+            justify-content: start;
+        }
+
+        .blog-post-images img {
+            border-radius: 12px;
+            object-fit: cover;
+            height: auto;
+            max-width: 100%;
+        }
+
+        .blog-post-date {
+            text-align: right;
+            font-family: 'Mini', sans-serif;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .blog-empty {
+            text-align: center;
+            padding: 50px 20px;
+            font-family: 'Mini', sans-serif;
+            font-size: 16px;
+            color: #999;
+        }
+
+        /* ========== Blog Admin Panel ========== */
+        .blog-admin-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .blog-admin-overlay.active {
+            display: flex;
+        }
+
+        .blog-admin-panel {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .blog-admin-title {
+            font-family: 'Mini', sans-serif;
+            font-size: 22px;
+            color: #3F3F4F;
+        }
+
+        .blog-admin-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .blog-admin-close:hover {
+            color: #3F3F4F;
+        }
+
+        .blog-admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .blog-admin-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .blog-admin-label {
+            font-family: 'Mini', sans-serif;
+            font-size: 14px;
+            color: #3F3F4F;
+        }
+
+        .blog-admin-select,
+        .blog-admin-textarea {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-family: 'Mini', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .blog-admin-select:focus,
+        .blog-admin-textarea:focus {
+            outline: none;
+            border-color: #F3DEE8;
+        }
+
+        .blog-admin-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .blog-admin-images-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .blog-admin-image-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .blog-admin-image-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .blog-admin-image-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .blog-admin-image-size {
+            font-family: 'Mini', sans-serif;
+            font-size: 13px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100px;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .blog-admin-image-size::-webkit-outer-spin-button,
+        .blog-admin-image-size::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .blog-admin-add-image {
+            padding: 10px 20px;
+            background: #F3DEE8;
+            border: 2px dashed #d4a5b9;
+            border-radius: 12px;
+            font-family: 'Mini', sans-serif;
+            font-size: 14px;
+            color: #8B4B6B;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .blog-admin-add-image:hover {
+            background: #f9e8ef;
+        }
+
+        .blog-admin-submit {
+            padding: 15px 30px;
+            background: #3F3F4F;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Mini', sans-serif;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .blog-admin-submit:hover {
+            background: #5a5a6e;
+            transform: scale(1.02);
+        }
+
+        /* Admin Tabs */
+        .blog-admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .blog-admin-tab {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: #fff;
+            font-family: 'Mini', sans-serif;
+            font-size: 13px;
+            color: #3F3F4F;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .blog-admin-tab:hover {
+            background: #f5f5f5;
+        }
+
+        .blog-admin-tab.active {
+            background: #3F3F4F;
+            color: #fff;
+            border-color: #3F3F4F;
+        }
+
+        /* Manage Posts */
+        .blog-admin-manage {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .blog-admin-posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .blog-admin-post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            gap: 15px;
+        }
+
+        .blog-admin-post-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .blog-admin-post-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-family: 'Mini', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .blog-admin-post-tag.portfolio {
+            background: #FFE4EC;
+            color: #8B4B6B;
+        }
+
+        .blog-admin-post-tag.life {
+            background: #E4F0FF;
+            color: #4B6B8B;
+        }
+
+        .blog-admin-post-preview {
+            font-family: 'Mini', sans-serif;
+            font-size: 13px;
+            color: #3F3F4F;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .blog-admin-post-date {
+            font-family: 'Mini', sans-serif;
+            font-size: 11px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+        .blog-admin-post-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .blog-admin-edit-btn {
+            padding: 8px 16px;
+            background: #6b9eff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Mini', sans-serif;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .blog-admin-edit-btn:hover {
+            background: #5288e8;
+            transform: scale(1.05);
+        }
+
+        .blog-admin-delete-btn {
+            padding: 8px 16px;
+            background: #ff6b6b;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Mini', sans-serif;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .blog-admin-delete-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        .blog-admin-empty {
+            text-align: center;
+            padding: 30px;
+            font-family: 'Mini', sans-serif;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Blog Container (not a window, just the content) -->
+    <div class="blog-content">
+        <div class="blog-container">
+            <div class="blog-posts" id="blog-posts">
+                <!-- Posts will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Firebase Setup ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyDaGgdwn_ruGbgltY4zbWnvB3A3i6-vZrk",
+            authDomain: "jumanaportfolio.firebaseapp.com",
+            databaseURL: "https://jumanaportfolio-default-rtdb.firebaseio.com",
+            projectId: "jumanaportfolio",
+            storageBucket: "jumanaportfolio.firebasestorage.app",
+            messagingSenderId: "345349404470",
+            appId: "1:345349404470:web:f3d264bbf5b4d23f21e597"
+        };
+
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (e) {
+            console.log("Firebase not configured yet");
+        }
+
+        // ========== Blog Functionality ==========
+        let currentBlogFilter = 'all';
+        let blogPosts = [];
+
+        function initBlog() {
+            const postsContainer = document.getElementById('blog-posts');
+            loadBlogPosts(postsContainer);
+        }
+
+        function loadBlogPosts(container) {
+            if (!database) {
+                renderBlogPosts(container);
+                return;
+            }
+
+            database.ref('blogPosts').orderByChild('timestamp').on('value', function(snapshot) {
+                blogPosts = [];
+                snapshot.forEach(function(childSnapshot) {
+                    const post = childSnapshot.val();
+                    post.id = childSnapshot.key;
+                    blogPosts.unshift(post);
+                });
+                const currentContainer = document.querySelector('#blog-posts');
+                renderBlogPosts(currentContainer || container);
+            });
+        }
+
+        function renderBlogPosts(container) {
+            if (!container) return;
+
+            if (blogPosts.length === 0) {
+                container.innerHTML = '<div class="blog-empty">No posts yet</div>';
+                return;
+            }
+
+            container.innerHTML = blogPosts.map(post => {
+                const tagClass = post.type === 'portfolio' ? 'portfolio' : 'life';
+                const tagText = post.type === 'portfolio' ? 'PORTFOLIO UPDATE' : 'LIFE UPDATE';
+
+                const date = new Date(post.timestamp);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                let imagesHTML = '';
+                if (post.images && post.images.length > 0) {
+                    const imageClass = post.images.length === 1 ? 'single' : (post.images.length === 2 ? 'double' : '');
+                    imagesHTML = `
+                        <div class="blog-post-images ${imageClass}">
+                            ${post.images.map(img => `<img src="${img.url || img}" style="width: ${img.size || 500}px;" alt="Post image">`).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="blog-post" data-type="${post.type}">
+                        <div class="blog-post-header">
+                            <div class="blog-post-author">
+                                <img src="Images/Bunny.png" alt="Avatar" class="blog-post-avatar">
+                                <span class="blog-post-username">@JumanaCS</span>
+                            </div>
+                            <span class="blog-post-tag ${tagClass}">${tagText}</span>
+                        </div>
+                        <div class="blog-post-text">${post.text}</div>
+                        ${imagesHTML}
+                        <div class="blog-post-date">${formattedDate}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== Blog Admin Panel ==========
+        let adminImages = [];
+        let editingPostId = null;
+
+        function createBlogAdminPanel() {
+            if (document.getElementById('blog-admin-overlay')) return;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'blog-admin-overlay';
+            overlay.id = 'blog-admin-overlay';
+            overlay.innerHTML = `
+                <div class="blog-admin-panel">
+                    <div class="blog-admin-header">
+                        <h2 class="blog-admin-title">Blog Admin</h2>
+                        <button class="blog-admin-close" id="blog-admin-close">&times;</button>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="blog-admin-tabs">
+                        <button class="blog-admin-tab active" data-tab="add">Add Post</button>
+                        <button class="blog-admin-tab" data-tab="manage">Manage Posts</button>
+                    </div>
+
+                    <!-- Add Post Tab -->
+                    <form class="blog-admin-form" id="blog-admin-form" data-tab-content="add">
+                        <div class="blog-admin-field">
+                            <label class="blog-admin-label">Post Type</label>
+                            <select class="blog-admin-select" id="blog-post-type">
+                                <option value="portfolio">Portfolio Update</option>
+                                <option value="life">Life Update</option>
+                            </select>
+                        </div>
+                        <div class="blog-admin-field">
+                            <label class="blog-admin-label">Post Content</label>
+                            <textarea class="blog-admin-textarea" id="blog-post-text" placeholder="What's on your mind?"></textarea>
+                        </div>
+                        <div class="blog-admin-field">
+                            <label class="blog-admin-label">Date</label>
+                            <input type="date" class="blog-admin-select" id="blog-post-date">
+                        </div>
+                        <div class="blog-admin-field">
+                            <label class="blog-admin-label">Images</label>
+                            <input type="file" id="blog-image-input" accept="image/*" style="display: none;" multiple>
+                            <button type="button" class="blog-admin-add-image" id="blog-add-image-btn">+ Add Image</button>
+                            <div class="blog-admin-images-preview" id="blog-images-preview"></div>
+                        </div>
+                        <button type="submit" class="blog-admin-submit">Post Update</button>
+                    </form>
+
+                    <!-- Manage Posts Tab -->
+                    <div class="blog-admin-manage" id="blog-admin-manage" data-tab-content="manage" style="display: none;">
+                        <div class="blog-admin-posts-list" id="blog-admin-posts-list">
+                            <!-- Posts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            document.getElementById('blog-admin-close').addEventListener('click', closeBlogAdmin);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeBlogAdmin();
+            });
+
+            document.getElementById('blog-add-image-btn').addEventListener('click', () => {
+                document.getElementById('blog-image-input').click();
+            });
+
+            document.getElementById('blog-image-input').addEventListener('change', handleImageSelect);
+
+            document.getElementById('blog-admin-form').addEventListener('submit', handleBlogSubmit);
+
+            document.querySelectorAll('.blog-admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.blog-admin-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const tabName = tab.dataset.tab;
+                    document.querySelectorAll('[data-tab-content]').forEach(content => {
+                        content.style.display = content.dataset.tabContent === tabName ? 'block' : 'none';
+                    });
+
+                    if (tabName === 'manage') {
+                        renderAdminPostsList();
+                    }
+                });
+            });
+        }
+
+        function openBlogAdmin() {
+            createBlogAdminPanel();
+            document.getElementById('blog-admin-overlay').classList.add('active');
+            adminImages = [];
+            document.getElementById('blog-images-preview').innerHTML = '';
+            document.getElementById('blog-post-text').value = '';
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('blog-post-date').value = today;
+        }
+
+        function closeBlogAdmin() {
+            const overlay = document.getElementById('blog-admin-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function handleImageSelect(e) {
+            const files = e.target.files;
+            const preview = document.getElementById('blog-images-preview');
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    const imageId = Date.now() + Math.random();
+
+                    adminImages.push({
+                        id: imageId,
+                        url: imageData,
+                        size: 500
+                    });
+
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'blog-admin-image-item';
+                    imageItem.dataset.id = imageId;
+                    imageItem.innerHTML = `
+                        <img src="${imageData}" alt="Preview">
+                        <button type="button" class="blog-admin-image-remove" onclick="removeAdminImage(${imageId})">&times;</button>
+                        <input type="number" class="blog-admin-image-size" value="500" placeholder="px" onchange="updateImageSize(${imageId}, this.value)">
+                    `;
+                    preview.appendChild(imageItem);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            e.target.value = '';
+        }
+
+        function removeAdminImage(imageId) {
+            adminImages = adminImages.filter(img => img.id !== imageId);
+            const item = document.querySelector(`.blog-admin-image-item[data-id="${imageId}"]`);
+            if (item) item.remove();
+        }
+
+        function updateImageSize(imageId, size) {
+            const img = adminImages.find(i => i.id === imageId);
+            if (img) img.size = size;
+        }
+
+        function handleBlogSubmit(e) {
+            e.preventDefault();
+
+            const postType = document.getElementById('blog-post-type').value;
+            const postText = document.getElementById('blog-post-text').value.trim();
+            const postDate = document.getElementById('blog-post-date').value;
+
+            if (!postText) {
+                alert('Please enter some text for your post');
+                return;
+            }
+
+            const timestamp = postDate ? new Date(postDate + 'T12:00:00').getTime() : Date.now();
+
+            const postData = {
+                type: postType,
+                text: postText,
+                images: adminImages.map(img => ({ url: img.url, size: img.size }))
+            };
+
+            if (database) {
+                if (editingPostId) {
+                    postData.timestamp = timestamp;
+                    database.ref('blogPosts/' + editingPostId).update(postData).then(() => {
+                        refreshBlogPosts();
+                    });
+                } else {
+                    postData.timestamp = timestamp;
+                    database.ref('blogPosts').push(postData).then(() => {
+                        refreshBlogPosts();
+                    });
+                }
+            } else {
+                if (editingPostId) {
+                    const postIndex = blogPosts.findIndex(p => p.id === editingPostId);
+                    if (postIndex !== -1) {
+                        blogPosts[postIndex] = { ...blogPosts[postIndex], ...postData, timestamp: timestamp };
+                    }
+                } else {
+                    postData.timestamp = timestamp;
+                    blogPosts.unshift(postData);
+                }
+                const container = document.querySelector('#blog-posts');
+                if (container) renderBlogPosts(container);
+            }
+
+            resetAdminForm();
+            closeBlogAdmin();
+        }
+
+        function refreshBlogPosts() {
+            const container = document.querySelector('#blog-posts');
+            if (container && database) {
+                database.ref('blogPosts').orderByChild('timestamp').once('value', function(snapshot) {
+                    blogPosts = [];
+                    snapshot.forEach(function(childSnapshot) {
+                        const post = childSnapshot.val();
+                        post.id = childSnapshot.key;
+                        blogPosts.unshift(post);
+                    });
+                    renderBlogPosts(container);
+                });
+            }
+        }
+
+        function resetAdminForm() {
+            editingPostId = null;
+            adminImages = [];
+            document.getElementById('blog-post-text').value = '';
+            document.getElementById('blog-images-preview').innerHTML = '';
+            document.querySelector('.blog-admin-tab[data-tab="add"]').textContent = 'Add Post';
+            document.querySelector('.blog-admin-submit').textContent = 'Post Update';
+        }
+
+        function renderAdminPostsList() {
+            const listContainer = document.getElementById('blog-admin-posts-list');
+            if (!listContainer) return;
+
+            if (blogPosts.length === 0) {
+                listContainer.innerHTML = '<div class="blog-admin-empty">No posts to manage</div>';
+                return;
+            }
+
+            listContainer.innerHTML = blogPosts.map(post => {
+                const tagClass = post.type === 'portfolio' ? 'portfolio' : 'life';
+                const tagText = post.type === 'portfolio' ? 'Portfolio' : 'Life';
+                const date = new Date(post.timestamp);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                const previewText = post.text.length > 50 ? post.text.substring(0, 50) + '...' : post.text;
+
+                return `
+                    <div class="blog-admin-post-item" data-id="${post.id}">
+                        <div class="blog-admin-post-info">
+                            <span class="blog-admin-post-tag ${tagClass}">${tagText}</span>
+                            <span class="blog-admin-post-preview">${previewText}</span>
+                            <span class="blog-admin-post-date">${formattedDate}</span>
+                        </div>
+                        <div class="blog-admin-post-actions">
+                            <button class="blog-admin-edit-btn" onclick="editPost('${post.id}')">Edit</button>
+                            <button class="blog-admin-delete-btn" onclick="deletePost('${post.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editPost(postId) {
+            const post = blogPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            editingPostId = postId;
+
+            document.querySelectorAll('.blog-admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.blog-admin-tab[data-tab="add"]').classList.add('active');
+            document.querySelectorAll('[data-tab-content]').forEach(content => {
+                content.style.display = content.dataset.tabContent === 'add' ? 'block' : 'none';
+            });
+
+            document.querySelector('.blog-admin-tab[data-tab="add"]').textContent = 'Edit Post';
+
+            document.getElementById('blog-post-type').value = post.type;
+            document.getElementById('blog-post-text').value = post.text;
+
+            document.querySelector('.blog-admin-submit').textContent = 'Update Post';
+
+            adminImages = [];
+            const preview = document.getElementById('blog-images-preview');
+            preview.innerHTML = '';
+
+            if (post.images && post.images.length > 0) {
+                post.images.forEach(img => {
+                    const imageId = Date.now() + Math.random();
+                    const imgUrl = img.url || img;
+                    const imgSize = img.size || 500;
+
+                    adminImages.push({
+                        id: imageId,
+                        url: imgUrl,
+                        size: imgSize
+                    });
+
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'blog-admin-image-item';
+                    imageItem.dataset.id = imageId;
+                    imageItem.innerHTML = `
+                        <img src="${imgUrl}" alt="Preview">
+                        <button type="button" class="blog-admin-image-remove" onclick="removeAdminImage(${imageId})">&times;</button>
+                        <input type="number" class="blog-admin-image-size" value="${imgSize}" placeholder="px" onchange="updateImageSize(${imageId}, this.value)">
+                    `;
+                    preview.appendChild(imageItem);
+                });
+            }
+        }
+
+        function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+
+            if (database) {
+                database.ref('blogPosts/' + postId).remove().then(() => {
+                    renderAdminPostsList();
+                    const container = document.querySelector('#blog-posts');
+                    if (container) {
+                        database.ref('blogPosts').orderByChild('timestamp').once('value', function(snapshot) {
+                            blogPosts = [];
+                            snapshot.forEach(function(childSnapshot) {
+                                const post = childSnapshot.val();
+                                post.id = childSnapshot.key;
+                                blogPosts.unshift(post);
+                            });
+                            renderBlogPosts(container);
+                            renderAdminPostsList();
+                        });
+                    }
+                });
+            } else {
+                blogPosts = blogPosts.filter(p => p.id !== postId);
+                renderAdminPostsList();
+                const container = document.querySelector('#blog-posts');
+                if (container) renderBlogPosts(container);
+            }
+        }
+
+        // Keyboard shortcut: Ctrl + J + U
+        let ctrlPressed = false;
+        let jPressed = false;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Control') ctrlPressed = true;
+            if (e.key === 'j' || e.key === 'J') jPressed = true;
+
+            if (ctrlPressed && jPressed && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+                openBlogAdmin();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Control') ctrlPressed = false;
+            if (e.key === 'j' || e.key === 'J') jPressed = false;
+        });
+
+        // Initialize blog on page load
+        initBlog();
+    </script>
+
+</body>
+</html>

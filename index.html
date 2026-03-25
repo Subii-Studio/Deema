@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deema Suleiman</title>
+  <link rel="icon" type="image/png" href="Images/favi.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="screen screen-1">
+    <img src="Images/Header.png" alt="Deema Suleiman" class="header-img">
+    <nav class="navbar">
+      <a href="#about" class="nav-link nav-active">About</a>
+      <a href="#research" class="nav-link">Research</a>
+      <a href="#leadership" class="nav-link">Leadership</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#testimonials" class="nav-link">Testimonials</a>
+      <a href="#blog" class="nav-link">Blog</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+    <div id="about" class="content-container active">
+      <img src="Images/about.PNG" alt="About" class="about-img">
+    </div>
+    <div id="research" class="content-container">
+    </div>
+    <div id="leadership" class="content-container">
+    </div>
+    <div id="gallery" class="content-container">
+      <div class="teeth-wrapper">
+        <img src="Images/Teeth.png" alt="Teeth" class="gallery-teeth-img">
+        <!-- Gem 1 -->
+        <div class="tooth-zone tooth-1">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 2 -->
+        <div class="tooth-zone tooth-2">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 3 -->
+        <div class="tooth-zone tooth-3">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 4 -->
+        <div class="tooth-zone tooth-4">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 5 -->
+        <div class="tooth-zone tooth-5">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 6 -->
+        <div class="tooth-zone tooth-6">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 7 -->
+        <div class="tooth-zone tooth-7">
+          <img src="Images/Dots.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 8 -->
+        <div class="tooth-zone tooth-8">
+          <img src="Images/Star.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 9 -->
+        <div class="tooth-zone tooth-9">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 10 -->
+        <div class="tooth-zone tooth-10">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 11 -->
+        <div class="tooth-zone tooth-11">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 12 -->
+        <div class="tooth-zone tooth-12">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 13 -->
+        <div class="tooth-zone tooth-13">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 14 -->
+        <div class="tooth-zone tooth-14">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 15 -->
+        <div class="tooth-zone tooth-15">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 16 -->
+        <div class="tooth-zone tooth-16">
+          <img src="Images/Gems.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 17 -->
+        <div class="tooth-zone tooth-17">
+          <img src="Images/Star.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 18 -->
+        <div class="tooth-zone tooth-18">
+          <img src="Images/Star.png" alt="Gem" class="gem-img">
+        </div>
+        <!-- Gem 19 -->
+        <div class="tooth-zone tooth-19">
+          <img src="Images/Star.png" alt="Gem" class="gem-img">
+        </div>
+      </div>
+    </div>
+    <div id="testimonials" class="content-container">
+    </div>
+    <div id="blog" class="content-container blog-container">
+      <div class="blog-content">
+        <div class="blog-inner">
+          <div class="blog-posts" id="blog-posts">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="contact" class="content-container contact-container">
+      <div class="contact-header">
+        <h2 class="contact-title">Let's Connect!</h2>
+      </div>
+      <div class="contact-divider"></div>
+      <div class="contact-form-box">
+        <form class="contact-form" action="https://formsubmit.co/Deemasuleiman01@gmail.com" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first-name" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last-name" class="form-input">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" name="email" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea name="message" class="form-input form-textarea"></textarea>
+          </div>
+          <button type="submit" class="form-button">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
