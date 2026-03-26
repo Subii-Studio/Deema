@@ -507,7 +507,12 @@ body {
   transition: opacity 0.3s ease;
 }
 
-.tooth-zone:hover,
+@media (hover: hover) {
+  .tooth-zone:hover {
+    opacity: 1;
+  }
+}
+
 .tooth-zone.active {
   opacity: 1;
 }
