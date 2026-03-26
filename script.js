@@ -536,3 +536,26 @@ initBlog();
     }
   });
 })();
+
+// EmailJS Contact Form
+emailjs.init('vOdjFDydPs7-gqmHd');
+
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('.form-button');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  emailjs.sendForm('service_s3hlfyc', 'template_0o775eh', this)
+    .then(function() {
+      btn.textContent = 'Sent!';
+      document.getElementById('contact-form').reset();
+      setTimeout(function() {
+        btn.textContent = 'Send';
+        btn.disabled = false;
+      }, 3000);
+    }, function() {
+      btn.textContent = 'Failed, try again';
+      btn.disabled = false;
+    });
+});

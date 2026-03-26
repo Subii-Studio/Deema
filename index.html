@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
@@ -207,15 +208,15 @@
       </div>
       <div class="contact-divider"></div>
       <div class="contact-form-box">
-        <form class="contact-form" action="https://formsubmit.co/jumana.suleiman.cs@gmail.com" method="POST">
+        <form class="contact-form" id="contact-form">
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" name="first-name" class="form-input">
+              <input type="text" name="first_name" class="form-input">
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" name="last-name" class="form-input">
+              <input type="text" name="last_name" class="form-input">
             </div>
           </div>
           <div class="form-group">
