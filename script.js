@@ -28,9 +28,57 @@ document.querySelectorAll('.tooth-zone').forEach(zone => {
   zone.addEventListener('click', () => {
     const wasActive = zone.classList.contains('active');
     document.querySelectorAll('.tooth-zone').forEach(z => z.classList.remove('active'));
-    if (!wasActive) zone.classList.add('active');
+
+    const galleryPhoto = document.getElementById('gallery-photo');
+
+    if (!wasActive) {
+      zone.classList.add('active');
+      const photo = zone.dataset.photo;
+      if (photo && galleryPhoto) {
+        const gemRect = zone.getBoundingClientRect();
+        const displayRect = galleryPhoto.parentElement.getBoundingClientRect();
+
+        // Calculate gem position relative to the display area
+        const startX = gemRect.left - displayRect.left + gemRect.width / 2 - displayRect.width / 2;
+        const startY = gemRect.top - displayRect.top + gemRect.height / 2 - displayRect.height / 2;
+
+        // Reset to gem position
+        galleryPhoto.classList.remove('active');
+        galleryPhoto.style.transition = 'none';
+        galleryPhoto.style.transform = `translate(${startX}px, ${startY}px) scale(0.05)`;
+        galleryPhoto.style.opacity = '0.5';
+        galleryPhoto.offsetHeight; // force reflow
+
+        // Set source and animate to final position
+        galleryPhoto.src = photo;
+        const customSize = zone.dataset.size;
+        const customTop = zone.dataset.top;
+        const customLeft = zone.dataset.left;
+        galleryPhoto.style.width = customSize || '100%';
+        galleryPhoto.style.top = customTop || '25%';
+        galleryPhoto.style.left = customLeft || '0';
+        galleryPhoto.style.transition = 'all 0.6s ease';
+        galleryPhoto.style.transform = 'translate(0, 0) scale(1)';
+        galleryPhoto.style.opacity = '1';
+        galleryPhoto.classList.add('active');
+      }
+    } else {
+      if (galleryPhoto) {
+        galleryPhoto.classList.remove('active');
+        galleryPhoto.style.transform = 'scale(0)';
+        galleryPhoto.style.opacity = '0';
+      }
+    }
   });
 });
+
+// ========== Testimonials Letter Toggle ==========
+const testimonialsWrapper = document.querySelector('.testimonials-wrapper');
+if (testimonialsWrapper) {
+  testimonialsWrapper.addEventListener('click', () => {
+    testimonialsWrapper.classList.toggle('open');
+  });
+}
 
 // ========== Firebase Setup ==========
 const firebaseConfig = {
@@ -459,3 +507,32 @@ document.addEventListener('keyup', (e) => {
 
 // Initialize blog
 initBlog();
+
+// Implant PDF page viewer
+(function() {
+  let currentPage = 1;
+  const totalPages = 30;
+  const img = document.getElementById('implant-page-img');
+  const pageNum = document.getElementById('implant-page-number');
+  const leftArrow = document.querySelector('.implant-arrow-left');
+  const rightArrow = document.querySelector('.implant-arrow-right');
+
+  function updatePage() {
+    img.src = 'Images/FinalImplant_' + currentPage + '.png';
+    pageNum.textContent = currentPage + ' / ' + totalPages;
+  }
+
+  leftArrow.addEventListener('click', function() {
+    if (currentPage > 1) {
+      currentPage--;
+      updatePage();
+    }
+  });
+
+  rightArrow.addEventListener('click', function() {
+    if (currentPage < totalPages) {
+      currentPage++;
+      updatePage();
+    }
+  });
+})();
