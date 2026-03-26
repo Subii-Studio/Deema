@@ -237,13 +237,24 @@ body {
   margin-bottom: 1.5%;
 }
 
+.implant-row {
+  margin-top: 3%;
+}
+
+.implant-row .research-text {
+  padding-top: 14%;
+}
+
+.implant-viewer-wrap {
+  width: 45%;
+  flex-shrink: 0;
+}
+
 .implant-viewer {
   display: flex;
   align-items: center;
   gap: 2%;
-  width: 55%;
-  margin-top: 20px;
-  margin-left: auto;
+  width: 100%;
 }
 
 .implant-page-img {
