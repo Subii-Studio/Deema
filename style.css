@@ -201,13 +201,40 @@ body {
 #research.content-container {
   background-color: #ffffff;
   min-height: auto;
-  padding: 20px 30px 30px;
+  padding: 3%;
 }
 
-.research-poster-img {
-  width: 50%;
+.research-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 3%;
+}
+
+.research-row .research-poster-img {
+  width: 45%;
   height: auto;
   display: block;
+  flex-shrink: 0;
+}
+
+.research-text {
+  flex: 1;
+  padding-top: 3%;
+}
+
+.research-title {
+  font-family: 'Niconne', cursive;
+  font-size: 2.5vw;
+  color: #333;
+  margin-bottom: 1.5%;
+}
+
+.research-paragraph {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9vw;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 1.5%;
 }
 
 .implant-viewer {
@@ -1122,10 +1149,38 @@ body {
   padding: 0;
 }
 
+#about.content-container.active {
+  display: flex;
+  align-items: stretch;
+}
+
 .about-img {
   width: 40%;
   height: auto;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
   margin-left: 3%;
+}
+
+.about-text {
+  flex: 1;
+  padding: 3% 4% 3% 1%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-title {
+  font-family: 'Niconne', cursive;
+  font-size: 2.5vw;
+  color: #333;
+  margin-bottom: 1.5%;
+}
+
+.about-paragraph {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9vw;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 1.5%;
 }
