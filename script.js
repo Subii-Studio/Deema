@@ -25,6 +25,10 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 document.querySelectorAll('.tooth-zone').forEach(zone => {
+  zone.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    zone.click();
+  });
   zone.addEventListener('click', () => {
     const wasActive = zone.classList.contains('active');
     document.querySelectorAll('.tooth-zone').forEach(z => z.classList.remove('active'));
