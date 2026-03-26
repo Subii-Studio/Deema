@@ -517,12 +517,6 @@ body {
   opacity: 1;
 }
 
-@media (hover: none) {
-  .tooth-zone {
-    opacity: 1;
-  }
-}
-
 .gem-img {
   width: 100%;
   height: 100%;
